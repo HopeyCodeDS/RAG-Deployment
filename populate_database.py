@@ -1,16 +1,21 @@
 import argparse
 import os
 import shutil
+import logging
 
-from langchain.document_loaders.pdf import PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from langchain.vectorstores.chroma import Chroma
+from langchain_chroma import Chroma
 
 from src.rag_app.get_embedding_function import get_embedding_function
 
-CHROMA_PATH = ""
-DATA_SOURCE_PATH = ""
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+CHROMA_PATH = "src/data/chroma"
+DATA_SOURCE_PATH = "src/data/source"
 
 
 def main():
@@ -30,6 +35,7 @@ def main():
 
 
 def load_documents():
+    logger.info(f"📚 Loading documents from: {DATA_SOURCE_PATH}")
     document_loader = PyPDFDirectoryLoader(DATA_SOURCE_PATH)
     return document_loader.load()
 
@@ -68,7 +74,7 @@ def calculate_chunk_ids(chunks):
 
         # Add it to the chunk meta-data
         chunk.metadata['id'] = chunk_id
-        return chunks
+    return chunks
 
 
 def add_to_chroma(chunks: list[Document]):
