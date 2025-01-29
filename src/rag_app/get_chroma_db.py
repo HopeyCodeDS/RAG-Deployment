@@ -1,7 +1,7 @@
 from langchain_community.vectorstores import Chroma
 from get_embedding_function import get_embedding_function
 
-CHROMA_PATH = "data/chroma"
+CHROMA_PATH = "../data/chroma"
 CHROMA_DB_INSTANCE = None       # A reference to singleton instance of ChromaDB
 
 
