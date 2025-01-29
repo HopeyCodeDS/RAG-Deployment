@@ -14,7 +14,8 @@ Answer the question based only on the following context:
 Answer the question based on the above context: {question}
 """
 
-BEDROCK_MODEL_ID = "amazon.titan-embed-text-v2:0"
+# BEDROCK_MODEL_ID = "amazon.titan-embed-text-v2:0"
+BEDROCK_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
 
 @dataclass
 class QueryResponse:
@@ -51,4 +52,14 @@ def query_rag(query_text: str) -> QueryResponse:
 
 
 if __name__ == "__main__":
-    query_rag("How much does a landing page cost to develop?")
+    # query_rag("How much does a landing page cost to develop?")
+    while True:
+        user_query = input("Enter your question (or 'quit' to exit): ")
+        if user_query.lower() == "quit":
+            break
+
+        try:
+            response = query_rag(user_query)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            continue
