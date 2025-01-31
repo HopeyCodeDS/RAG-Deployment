@@ -5,13 +5,13 @@ from langchain_aws import ChatBedrock
 from get_chroma_db import get_chroma_db
 
 PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
+Use this context to answer the question, but respond naturally without referencing the context:
 
 {context}
 
 ---
 
-Answer the question based on the above context: {question}
+Question: {question}
 """
 
 # BEDROCK_MODEL_ID = "amazon.titan-embed-text-v2:0"
