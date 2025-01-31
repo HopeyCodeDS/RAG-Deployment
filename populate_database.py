@@ -33,13 +33,17 @@ def main():
     chunks = split_documents(documents)
     add_to_chroma(chunks)
 
-
+"""Load: First we need to load our data. This is done with Document Loaders
+        (I am making use of PyPDFDirectoryLoader, which will recursively split the document 
+        using common separators like new lines until each chunk is the appropriate size.)."""
 def load_documents():
     logger.info(f"📚 Loading documents from: {DATA_SOURCE_PATH}")
     document_loader = PyPDFDirectoryLoader(DATA_SOURCE_PATH)
     return document_loader.load()
 
 
+"""Split: Text splitters break large Documents into smaller chunks. This is useful both for indexing data and passing it into a model, 
+           as large chunks are harder to search over and won't fit in a model's finite context window."""
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=600,
@@ -77,6 +81,7 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
+"""Store: We need somewhere to store and index our splits, so that they can be searched over later. This is often done using a VectorStore and Embeddings model."""
 def add_to_chroma(chunks: list[Document]):
     """ Load the existing database """
     db = Chroma(
