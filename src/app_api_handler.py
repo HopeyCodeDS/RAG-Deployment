@@ -1,8 +1,8 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from mangum import Mangum
-from rag_app.query_rag import query_rag, QueryResponse
+from src.rag_app.query_rag import query_rag, QueryResponse
 
 
 app = FastAPI()
@@ -17,9 +17,13 @@ def index():
     return {"Hello": "World"}
 
 @app.post("/submit_query")
-def submit_query_endpoint(request: SubmitQueryRequest) -> QueryResponse:
-    query_response = query_rag(request.query_text)
-    return query_response
+async def submit_query_endpoint(request: SubmitQueryRequest) -> QueryResponse:
+    try:
+        query_response = query_rag(request.query_text)
+        return query_response
+    except Exception as e:
+        print(f"Error processing query: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

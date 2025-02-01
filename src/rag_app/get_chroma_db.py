@@ -1,7 +1,10 @@
+from pathlib import Path
 from langchain_community.vectorstores import Chroma
-from get_embedding_function import get_embedding_function
+from .get_embedding_function import get_embedding_function
 
-CHROMA_PATH = "../data/chroma"
+# Get the absolute path of the Chroma data directory
+current_dir = Path(__file__).resolve().parent
+CHROMA_PATH = str(current_dir.parent / "data" / "chroma")
 CHROMA_DB_INSTANCE = None       # A reference to singleton instance of ChromaDB
 
 
@@ -16,3 +19,5 @@ def get_chroma_db():
         print(f"✅ Init ChromaDB {CHROMA_DB_INSTANCE} from {CHROMA_PATH}")
 
     return CHROMA_DB_INSTANCE
+
+print(f"ChromaDB path: {CHROMA_PATH}")
