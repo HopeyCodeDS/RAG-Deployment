@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 from langchain.prompts import ChatPromptTemplate
 from langchain_aws import ChatBedrock
-from get_chroma_db import get_chroma_db
+from src.rag_app.get_chroma_db import get_chroma_db
 
 PROMPT_TEMPLATE = """
 Use this context to answer the question, but respond naturally without referencing the context:
@@ -52,14 +52,14 @@ def query_rag(query_text: str) -> QueryResponse:
 
 
 if __name__ == "__main__":
-    # query_rag("How much does a landing page cost to develop?")
-    while True:
-        user_query = input("Enter your question (or 'quit' to exit): ")
-        if user_query.lower() == "quit":
-            break
-
-        try:
-            response = query_rag(user_query)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            continue
+    query_rag("How much does a landing page cost to develop?")
+    # while True:
+    #     user_query = input("Enter your question (or 'quit' to exit): ")
+    #     if user_query.lower() == "quit":
+    #         break
+    #
+    #     try:
+    #         response = query_rag(user_query)
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         continue
