@@ -1,14 +1,24 @@
 import argparse
 import os
+import sys
 import shutil
 import logging
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Loading .env from the same directory as this script
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
+# Adding src/ to path so rag_app imports resolve when running from docker_image/
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from langchain_chroma import Chroma
 
-from src.rag_app.get_embedding_function import get_embedding_function
+from rag_app.get_embedding_function import get_embedding_function
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -33,21 +43,18 @@ def main():
     chunks = split_documents(documents)
     add_to_chroma(chunks)
 
-"""Load: First we need to load our data. This is done with Document Loaders
-        (I am making use of PyPDFDirectoryLoader, which will recursively split the document 
-        using common separators like new lines until each chunk is the appropriate size.)."""
 def load_documents():
+    """Load PDF documents using PyPDFDirectoryLoader."""
     logger.info(f"📚 Loading documents from: {DATA_SOURCE_PATH}")
     document_loader = PyPDFDirectoryLoader(DATA_SOURCE_PATH)
     return document_loader.load()
 
 
-"""Split: Text splitters break large Documents into smaller chunks. This is useful both for indexing data and passing it into a model, 
-           as large chunks are harder to search over and won't fit in a model's finite context window."""
 def split_documents(documents: list[Document]):
+    """Split large documents into smaller chunks for indexing and model context."""
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=600,
-        chunk_overlap=120,
+        chunk_size=1000,
+        chunk_overlap=200,
         length_function=len,
         is_separator_regex=False,
     )
@@ -81,9 +88,8 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
-"""Store: We need somewhere to store and index our splits, so that they can be searched over later. This is often done using a VectorStore and Embeddings model."""
 def add_to_chroma(chunks: list[Document]):
-    """ Load the existing database """
+    """Store document chunks in ChromaDB, skipping duplicates."""
     db = Chroma(
         persist_directory=CHROMA_PATH,
         embedding_function=get_embedding_function()
