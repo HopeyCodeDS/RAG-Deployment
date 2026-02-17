@@ -1,5 +1,17 @@
-.pyc
-.idea
-**/chroma
-env/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.idea/
 *.xml
+
+# Environment
+.env
+env/
+venv/
+.venv/
+
+# ChromaDB
+**/chroma/
