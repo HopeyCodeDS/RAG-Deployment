@@ -4,11 +4,9 @@ LABEL authors="Opeyemi"
 
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 
-# Required to make SQLlite3 work for Chroma.
-RUN pip install pysqlite3-binary
-
-# Install the specified dependencies
-RUN pip install -r requirements.txt --upgrade
+# Install pysqlite3 (required for SQLite3/ChromaDB in Lambda) and project dependencies
+RUN pip install pysqlite3-binary && \
+    pip install -r requirements.txt --upgrade
 
 # For local testing
 EXPOSE 8000
