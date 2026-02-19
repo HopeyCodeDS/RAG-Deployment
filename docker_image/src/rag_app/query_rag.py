@@ -21,11 +21,15 @@ BEDROCK_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
 RELEVANCE_THRESHOLD = 1.0  # ChromaDB L2 distance; lower = more similar
 
 # Module-level singleton — persists across warm Lambda invocations
-_bedrock_model = ChatBedrock(
-    model_id=BEDROCK_MODEL_ID,
-    region_name="us-east-1",
-    model_kwargs={"max_tokens": 1000, "temperature": 0},
-)
+try:
+    _bedrock_model = ChatBedrock(
+        model_id=BEDROCK_MODEL_ID,
+        region_name="us-east-1",
+        model_kwargs={"max_tokens": 1000, "temperature": 0},
+    )
+except Exception as e:
+    logger.error(f"Failed to initialize Bedrock model: {e}")
+    _bedrock_model = None
 
 
 @dataclass
@@ -36,6 +40,9 @@ class QueryResponse:
 
 
 def query_rag(query_text: str) -> QueryResponse:
+    if _bedrock_model is None:
+        raise RuntimeError("Bedrock model is not initialized. Check AWS credentials and configuration.")
+
     db = get_chroma_db()
 
     # Search the DB and filter by relevance score
@@ -56,7 +63,7 @@ def query_rag(query_text: str) -> QueryResponse:
     response = _bedrock_model.invoke(prompt)
     response_text = response.content
 
-    sources = [doc.metadata.get("id", None) for doc, _score in results]
+    sources = [doc.metadata["id"] for doc, _score in results if "id" in doc.metadata]
     logger.info(f"Query: {query_text} | Sources: {sources}")
 
     return QueryResponse(

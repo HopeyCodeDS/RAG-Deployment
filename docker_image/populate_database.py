@@ -45,6 +45,8 @@ def main():
 
 def load_documents():
     """Load PDF documents using PyPDFDirectoryLoader."""
+    if not os.path.isdir(DATA_SOURCE_PATH):
+        raise FileNotFoundError(f"Data source directory not found: {DATA_SOURCE_PATH}")
     logger.info(f"📚 Loading documents from: {DATA_SOURCE_PATH}")
     document_loader = PyPDFDirectoryLoader(DATA_SOURCE_PATH)
     return document_loader.load()
@@ -90,14 +92,18 @@ def calculate_chunk_ids(chunks):
 
 def add_to_chroma(chunks: list[Document]):
     """Store document chunks in ChromaDB, skipping duplicates."""
-    db = Chroma(
-        persist_directory=CHROMA_PATH,
-        embedding_function=get_embedding_function()
-    )
+    try:
+        db = Chroma(
+            persist_directory=CHROMA_PATH,
+            embedding_function=get_embedding_function()
+        )
+    except Exception as e:
+        logger.error(f"Failed to initialize ChromaDB: {e}")
+        raise
 
     # Calculate Page IDs
     chunks_with_ids = calculate_chunk_ids(chunks)
-    for chunk in chunks:
+    for chunk in chunks_with_ids:
         print(f"Chunk Page Sample: {chunk.metadata['id']}\n{chunk.page_content}\n\n")
 
     # Add or update the documents.
@@ -114,14 +120,22 @@ def add_to_chroma(chunks: list[Document]):
     if len(new_chunks):
         print(f"👉 Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata['id'] for chunk in new_chunks]
-        db.add_documents(new_chunks, ids=new_chunk_ids)
+        try:
+            db.add_documents(new_chunks, ids=new_chunk_ids)
+        except Exception as e:
+            logger.error(f"Failed to add documents to ChromaDB: {e}")
+            raise
     else:
         print("✅ No new documents to add")
 
 
 def clear_database():
     if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+        try:
+            shutil.rmtree(CHROMA_PATH)
+        except OSError as e:
+            logger.error(f"Failed to clear database: {e}")
+            raise
 
 
 if __name__ == '__main__':

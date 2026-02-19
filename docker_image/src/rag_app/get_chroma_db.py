@@ -22,14 +22,21 @@ def get_chroma_db():
 
         # In Lambda runtime, I copied ChromaDB to /tmp so it can have write permissions.
         if IS_USING_IMAGE_RUNTIME:
-            __import__("pysqlite3")
-            sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+            try:
+                __import__("pysqlite3")
+                sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+            except ImportError:
+                logger.warning("pysqlite3 not available, using default sqlite3")
             copy_chroma_to_tmp()
 
-        CHROMA_DB_INSTANCE = Chroma(
-            persist_directory=get_runtime_chroma_path(),
-            embedding_function=get_embedding_function(),
-        )
+        try:
+            CHROMA_DB_INSTANCE = Chroma(
+                persist_directory=get_runtime_chroma_path(),
+                embedding_function=get_embedding_function(),
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize ChromaDB: {e}")
+            raise
         logger.info(f"Init ChromaDB from {get_runtime_chroma_path()}")
 
     return CHROMA_DB_INSTANCE
@@ -45,7 +52,11 @@ def copy_chroma_to_tmp():
     if len(tmp_contents) == 0:
         logger.info(f"Copying ChromaDB from {CHROMA_PATH} to {dst_chroma_path}")
         os.makedirs(dst_chroma_path, exist_ok=True)
-        shutil.copytree(CHROMA_PATH, dst_chroma_path, dirs_exist_ok=True)
+        try:
+            shutil.copytree(CHROMA_PATH, dst_chroma_path, dirs_exist_ok=True)
+        except (shutil.Error, OSError) as e:
+            logger.error(f"Failed to copy ChromaDB to {dst_chroma_path}: {e}")
+            raise
     else:
         logger.info(f"ChromaDB already exists in {dst_chroma_path}")
 
