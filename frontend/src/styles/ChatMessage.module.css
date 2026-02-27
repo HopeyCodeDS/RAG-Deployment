@@ -1,0 +1,43 @@
+.row {
+  display: flex;
+  width: 100%;
+}
+
+.userRow {
+  justify-content: flex-end;
+}
+
+.assistantRow {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.userBubble {
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.assistantBubble {
+  background: var(--color-assistant-bg);
+  color: var(--color-text-primary);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 480px) {
+  .bubble {
+    max-width: 90%;
+  }
+}
