@@ -15,3 +15,7 @@ venv/
 
 # ChromaDB
 **/chroma/
+
+# Frontend
+node_modules/
+dist/
