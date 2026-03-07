@@ -25,8 +25,7 @@ jobs:
           pip install pytest httpx
 
       - name: Run tests
-        working-directory: docker_image/src
-        run: pytest ../../tests/ -v
+        run: PYTHONPATH=docker_image/src pytest tests/ -v
 
   docker-build:
     runs-on: ubuntu-latest
