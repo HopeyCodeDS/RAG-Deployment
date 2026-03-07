@@ -58,3 +58,12 @@ jobs:
           docker build -t rag-app docker_image/
           docker tag rag-app:latest ${{ secrets.ECR_REPOSITORY_URI }}:latest
           docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
+
+      - name: Update Lambda function
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+            --image-uri ${{ secrets.ECR_REPOSITORY_URI }}:latest
+          aws lambda wait function-updated-v2 \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
+          echo "Lambda function updated successfully."
