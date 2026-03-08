@@ -158,4 +158,8 @@ class TestApiEndpoints:
             response = client.post("/submit_query", json={"query_text": ""})
             assert response.status_code == 422
 
-
+    def test_submit_query_whitespace_only(self, client):
+        """Whitespace-only query text should return 422 validation error."""
+        with patch("app_api_handler.API_KEY", None):
+            response = client.post("/submit_query", json={"query_text": "   "})
+            assert response.status_code == 422
