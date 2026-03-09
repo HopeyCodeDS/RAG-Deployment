@@ -5,6 +5,13 @@ import shutil
 import logging
 from pathlib import Path
 
+# Swap sqlite3 with pysqlite3 before any ChromaDB import
+try:
+    __import__("pysqlite3")
+    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+except ImportError:
+    pass
+
 from dotenv import load_dotenv
 
 # Loading .env from the same directory as this script
