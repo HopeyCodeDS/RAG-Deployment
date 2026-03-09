@@ -58,6 +58,6 @@ def copy_chroma_to_tmp():
 
 def get_runtime_chroma_path():
     if IS_USING_IMAGE_RUNTIME:
-        return f"/tmp/{CHROMA_PATH}"
+        return "/tmp/data/chroma"
     else:
         return CHROMA_PATH
