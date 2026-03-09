@@ -22,11 +22,6 @@ def get_chroma_db():
 
         # In Lambda runtime, I copied ChromaDB to /tmp so it can have write permissions.
         if IS_USING_IMAGE_RUNTIME:
-            try:
-                __import__("pysqlite3")
-                sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
-            except ImportError:
-                logger.warning("pysqlite3 not available, using default sqlite3")
             copy_chroma_to_tmp()
 
         try:

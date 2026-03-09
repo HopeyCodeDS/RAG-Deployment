@@ -1,5 +1,15 @@
-import logging
 import os
+import sys
+
+# Swap sqlite3 with pysqlite3 before any ChromaDB import (ChromaDB checks sqlite3 version at import time)
+if os.environ.get("IS_USING_IMAGE_RUNTIME"):
+    try:
+        __import__("pysqlite3")
+        sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+    except ImportError:
+        pass
+
+import logging
 from pathlib import Path
 
 from dotenv import load_dotenv
