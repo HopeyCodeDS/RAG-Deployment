@@ -32,9 +32,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Paths work both locally (from docker_image/) and inside Docker (from /var/task/)
+_script_dir = Path(__file__).resolve().parent
 _in_docker = os.path.exists("/var/task")
-CHROMA_PATH = "data/chroma" if _in_docker else "src/data/chroma"
-DATA_SOURCE_PATH = "data/source" if _in_docker else "src/data/source"
+CHROMA_PATH = str(_script_dir / "data" / "chroma") if _in_docker else "src/data/chroma"
+DATA_SOURCE_PATH = str(_script_dir / "data" / "source") if _in_docker else "src/data/source"
 
 
 def main():
