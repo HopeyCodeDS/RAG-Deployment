@@ -24,8 +24,10 @@ from rag_app.get_embedding_function import get_embedding_function
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-CHROMA_PATH = "src/data/chroma"
-DATA_SOURCE_PATH = "src/data/source"
+# Paths work both locally (from docker_image/) and inside Docker (from /var/task/)
+_in_docker = os.path.exists("/var/task")
+CHROMA_PATH = "data/chroma" if _in_docker else "src/data/chroma"
+DATA_SOURCE_PATH = "data/source" if _in_docker else "src/data/source"
 
 
 def main():
