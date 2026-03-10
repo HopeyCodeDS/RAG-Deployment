@@ -1,15 +1,89 @@
 .window {
   flex: 1;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
+/* ── Empty State ── */
 .empty {
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: 0.9375rem;
   margin: auto;
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  animation: fadeIn 0.6s ease;
+}
+
+.emptyBolt {
+  width: 80px;
+  height: 80px;
+  opacity: 0.15;
+  animation: floatBolt 4s ease-in-out infinite;
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.emptyHint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.emptyPrompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  max-width: 420px;
+}
+
+.promptChip {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0.4rem 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.promptChip:hover {
+  color: var(--color-electric);
+  border-color: var(--color-border-active);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+@keyframes floatBolt {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

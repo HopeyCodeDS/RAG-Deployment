@@ -7,17 +7,17 @@
 .inputWrapper {
   display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
-  background: var(--color-bg);
+  gap: 0.625rem;
+  background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 0.5rem 0.625rem;
-  transition: border-color 0.15s ease;
+  border-radius: var(--radius-xl);
+  padding: 0.625rem 0.625rem 0.625rem 1.125rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .inputWrapper:focus-within {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+  border-color: var(--color-border-active);
+  box-shadow: var(--shadow-glow-cyan);
 }
 
 .textarea {
@@ -25,7 +25,7 @@
   border: none;
   outline: none;
   background: transparent;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--color-text-primary);
   resize: none;
@@ -36,45 +36,60 @@
 }
 
 .textarea::placeholder {
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
 }
 
 .textarea:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.sendButton {
-  flex-shrink: 0;
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  height: 2.25rem;
-  transition: background 0.15s ease, opacity 0.15s ease;
-}
-
-.sendButton:hover:not(:disabled) {
-  background: var(--color-accent-hover);
-}
-
-.sendButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* ── Send Button (lightning bolt) ── */
+.sendButton {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-electric) 0%, var(--color-electric-dim) 100%);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 12px var(--color-electric-glow);
+  position: relative;
+}
+
+.sendButton:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px var(--color-electric-glow-strong);
+}
+
+.sendButton:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.sendButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.sendIcon {
+  width: 18px;
+  height: 18px;
+  fill: var(--color-bg);
+}
+
 .spinner {
   display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: white;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(10, 14, 23, 0.3);
+  border-top-color: var(--color-bg);
   border-radius: 50%;
-  animation: spin 0.75s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin {
@@ -84,10 +99,11 @@
 }
 
 .charCount {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
   text-align: right;
-  padding-right: 0.25rem;
+  padding-right: 0.5rem;
 }
 
 .overLimit {
