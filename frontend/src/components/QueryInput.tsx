@@ -40,7 +40,7 @@ export default function QueryInput({ onSubmit, isLoading }: Props) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask a question... (Enter to send, Shift+Enter for new line)"
+          placeholder="Ask a question..."
           rows={1}
           disabled={isLoading}
           aria-label="Query input"
