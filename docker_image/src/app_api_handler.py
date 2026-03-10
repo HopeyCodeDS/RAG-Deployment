@@ -20,9 +20,12 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 import uvicorn
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
 from mangum import Mangum
 from rag_app.query_rag import query_rag, QueryResponse
+
+DATA_SOURCE_DIR = Path(__file__).resolve().parent / "data" / "source"
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +72,15 @@ async def submit_query_endpoint(request: SubmitQueryRequest) -> QueryResponse:
     except Exception as e:
         logger.error(f"Error processing query: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="An internal error occurred. Please try again later.")
+
+
+@app.get("/documents/{filename}")
+async def get_document(filename: str):
+    """Serve a source PDF so users can verify cited sources."""
+    file_path = (DATA_SOURCE_DIR / filename).resolve()
+    if not file_path.is_relative_to(DATA_SOURCE_DIR) or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Document not found")
+    return FileResponse(file_path, media_type="application/pdf", filename=filename)
 
 
 if __name__ == "__main__":
