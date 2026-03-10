@@ -56,7 +56,49 @@ export default function App() {
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
-        <h1>Zepp</h1>
+        <svg
+          className={styles.logo}
+          viewBox="0 0 64 64"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="64" height="64" rx="14" fill="#0f1729" />
+          <rect
+            x="2"
+            y="2"
+            width="60"
+            height="60"
+            rx="12"
+            fill="none"
+            stroke="url(#hBolt)"
+            strokeWidth="1.5"
+            opacity="0.4"
+          />
+          <path
+            d="M38 14 L18 36 L28 36 L26 50 L46 28 L36 28 Z"
+            fill="url(#hBolt)"
+          />
+          <defs>
+            <linearGradient
+              id="hBolt"
+              x1="20%"
+              y1="0%"
+              x2="80%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="#00f0ff" />
+              <stop offset="100%" stopColor="#f5a623" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className={styles.headerText}>
+          <h1>ZEPP</h1>
+          <span className={styles.headerSubtitle}>Knowledge Engine</span>
+        </div>
+        <div className={styles.headerStatus}>
+          <span className={styles.statusDot} />
+          Online
+        </div>
       </header>
 
       <main className={styles.main}>
@@ -67,6 +109,7 @@ export default function App() {
           messages={messages}
           isLoading={isLoading}
           bottomRef={bottomRef}
+          onPromptClick={handleSubmit}
         />
       </main>
 

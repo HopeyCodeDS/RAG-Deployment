@@ -55,7 +55,13 @@ export default function QueryInput({ onSubmit, isLoading }: Props) {
           {isLoading ? (
             <span className={styles.spinner} aria-hidden="true" />
           ) : (
-            "Send"
+            <svg
+              className={styles.sendIcon}
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M13 2 L4 14 L10 14 L9 22 L20 10 L14 10 Z" />
+            </svg>
           )}
         </button>
       </div>
