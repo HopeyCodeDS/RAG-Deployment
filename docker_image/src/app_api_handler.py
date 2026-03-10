@@ -80,7 +80,11 @@ async def get_document(filename: str):
     file_path = (DATA_SOURCE_DIR / filename).resolve()
     if not file_path.is_relative_to(DATA_SOURCE_DIR) or not file_path.is_file():
         raise HTTPException(status_code=404, detail="Document not found")
-    return FileResponse(file_path, media_type="application/pdf", filename=filename)
+    return FileResponse(
+        file_path,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
 
 
 if __name__ == "__main__":
