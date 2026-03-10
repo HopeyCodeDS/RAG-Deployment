@@ -56,7 +56,7 @@ export default function App() {
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
-        <h1>RAG Assistant</h1>
+        <h1>Zepp</h1>
       </header>
 
       <main className={styles.main}>
