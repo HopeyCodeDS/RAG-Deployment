@@ -1,9 +1,33 @@
 # serverless-rag-api
 
-A production-ready Retrieval-Augmented Generation (RAG) API deployed on **AWS Lambda** via Docker. Accepts natural-language queries against your PDF knowledge base and returns grounded answers with source citations.
+ production-ready Retrieval-Augmented Generation (RAG) stack with a **serverless API** and a **React frontend**. The backend runs on **AWS Lambda** (Docker + FastAPI + Mangum) behind **API Gateway**, indexing your PDF knowledge base into **ChromaDB** and using **AWS Bedrock (Claude 3 Haiku + Bedrock embeddings)** to return grounded answers with source citations. The frontend is a modern React chat-style UI that lets users submit natural-language queries, view streamed answers, and inspect the underlying source documents.
 
 ---
 
+## Features
+
+- **Serverless RAG API**
+  - FastAPI app wrapped with Mangum and deployed to AWS Lambda via Docker image.
+  - Uses ChromaDB (L2 similarity) as a vector store over your PDF documents.
+  - Queries AWS Bedrock (`anthropic.claude-3-haiku-20240307-v1:0`) with deterministic settings (`temperature=0`) for grounded answers.
+
+- **PDF‑based knowledge base**
+  - Simple ingestion pipeline: drop PDFs into `docker_image/src/data/source/` and run `populate_database.py`.
+  - Rebuilds the vector store from scratch with a `--reset` flag.
+
+- **Source citations and document serving**
+  - Each answer returns a list of `sources` (document identifiers) that were used to answer the query.
+  - Dedicated `GET /documents/{filename}` endpoint serves the original PDFs so users can verify cited sources.
+
+- **React chat frontend**
+  - Single-page React app with a chat-style interface (“ZEPP Knowledge Engine”).
+  - Lets users submit queries, view responses, and see which sources were used.
+  - Communicates with the backend `POST /submit_query` endpoint and links to `GET /documents/{filename}` for opening PDFs.
+
+- **Production-friendly concerns**
+  - Optional API key protection via `API_KEY` environment variable (skipped if unset).
+  - Configurable CORS via `CORS_ORIGINS`.
+  - Uses a module-level Bedrock client and ChromaDB connection to take advantage of warm Lambda executions.
 
 ```
 User Query → API Gateway → Lambda → ChromaDB (vector search) → Bedrock (Claude) → Response + Sources
@@ -64,7 +88,7 @@ cd docker_image
 pip install -r requirements.txt
 python populate_database.py
 
-# To rebuild from scratch:
+# To rebuild from scratch locally:
 python populate_database.py --reset
 ```
 
@@ -81,28 +105,16 @@ docker run -p 8000:8000 --env-file docker_image/.env rag-api
 
 ### Health check
 
-```
-GET http://localhost:8000/
-```
-
-### Submit a query
-
-```bash
-curl -X POST http://localhost:8000/submit_query \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
-  -d '{"query_text": "How do I contact support?"}'
+```http
+GET /
 ```
 
-**Response**
+## Response
 
-```json
 {
-  "query_text": "How do I contact support?",
-  "response_text": "You can reach support at ...",
-  "sources": ["src/data/source/manual.pdf:3:1"]
+  "status": "healthy",
+  "service": "rag-api"
 }
-```
 
 ---
 
